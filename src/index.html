@@ -1,10 +1,66 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>DevOps</title>
+  <meta charset="UTF-8">
+  <title>Enviar Lista de Computadores</title>
 </head>
 <body>
-<h1>Hello DevOps World!!!</h1>
-<p>Yeah! Another hello world...</p>
+  <h1>Lista de Computadores</h1>
+  <ul id="computers-list">
+    <!-- Lista de computadores será exibida aqui -->
+  </ul>
+  <input type="text" id="computer-input" placeholder="Digite um computador">
+  <button onclick="adicionarComputador()">Adicionar Computador</button>
+  <button onclick="enviarRequisicao()">Enviar Requisição</button>
+
+  <script>
+    let computers = [];
+
+    function adicionarComputador() {
+      const computerInput = document.getElementById('computer-input');
+      const computerName = computerInput.value.trim();
+
+      if (computerName !== '') {
+        computers.push(computerName);
+        computerInput.value = '';
+        exibirListaComputadores();
+      }
+    }
+
+    function exibirListaComputadores() {
+      const computersList = document.getElementById('computers-list');
+      computersList.innerHTML = '';
+
+      computers.forEach(computer => {
+        const li = document.createElement('li');
+        li.textContent = computer;
+        computersList.appendChild(li);
+      });
+    }
+
+    function enviarRequisicao() {
+      const data = {
+        array: computers
+      };
+
+      fetch('http://localhost:5000/api/opt', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      })
+      .then(response => response.json())
+      .then(responseData => {
+        console.log('Resposta da API:', responseData);
+        // Limpar lista após o envio bem-sucedido, se desejado
+        computers = [];
+        exibirListaComputadores();
+      })
+      .catch(error => {
+        console.error('Erro ao enviar POST para a API:', error);
+      });
+    }
+  </script>
 </body>
 </html>
